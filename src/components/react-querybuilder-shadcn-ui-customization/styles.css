@@ -1,0 +1,220 @@
+@import 'react-querybuilder/dist/query-builder-layout.scss';
+
+.dark .queryBuilder {
+  color-scheme: dark;
+}
+
+.queryBuilder {
+  /**
+  Lib shad default
+  */
+  &.default {
+    .ruleGroup-addGroup {
+      & + button.ruleGroup-cloneGroup,
+      & + button.ruleGroup-lock
+      & + button.ruleGroup-remove
+      {
+        margin-left: auto !important;
+      }
+    }
+    .rule-operators,
+    .rule-value {
+      & + button.rule-cloneRule,
+      & + button.rule-lock,
+      & + button.rule-remove 
+      {
+        margin-left: auto !important;
+      }
+    }
+    .ruleGroup .rule .rule-value:has(.rule-value-list-item) {
+      gap: 0;
+    }
+  }
+
+  /**
+  Variant left align
+  **/
+  &.queryBuilderWithLeftAlign {
+      .ruleGroup-addGroup {
+        & + button.ruleGroup-cloneGroup,
+        & + button.ruleGroup-lock
+        {
+          margin-left: auto !important;
+        }
+      }
+      > .ruleGroup:first-child > .ruleGroup-header {
+        order: 10000;
+        margin-top: 10px;
+      }
+
+      /* // remove add button (but should do w/ react component later; */
+      .ruleGroup:not(:first-child) .ruleGroup-header {
+        button[title='Add rule'] {
+          display: none;
+        }
+      }
+
+      .rule,
+      .ruleGroup .ruleGroup {
+        &::before,
+        &::after {
+          border-color: hsl(var(--input));
+        }
+      }
+
+
+
+
+      .betweenRules {
+        &::before {
+          border-color: hsl(var(--input));
+        }
+      }
+
+      .ruleGroup-body {
+        /* Override the default flex layout */
+        display: grid !important;
+        /* Allow the right-hand column (the rule/subgroup) to expand as needed */
+        /* Collapse the left-hand column (the combinator) to the width of the content */
+        grid-template-columns: min-content auto;
+        /* Keep the combinator aligned with the top of the rule/subgroup */
+        align-items: start;
+      }
+      
+      /* Indent the first rule/subgroup since it has no preceding combinator */
+      .ruleGroup-body > .rule:first-child:not(:only-child),
+      .ruleGroup-body > .ruleGroup:first-child:not(:only-child) {
+        grid-column-start: 2;
+      }
+      
+      .queryBuilder-dragHandle {
+        order: 5;
+        display: flex;
+        align-self: flex-end; 
+        place-self: center;
+      }
+    }
+
+
+  
+  &.queryBuilderWithAlternateLayout {
+
+    &.with-branch-lines {
+      --local-branch-line-color: grey;
+      .dark & {
+        --local-group-box-shadow-color: rgba(255, 255, 255, .2);
+      }
+      .rule {
+
+        &:before,
+        &:after {
+          border-style: solid;
+          border-width: 0 0 0 1px;
+          border-color: var(--local-branch-line-color);
+        }
+        &:before {
+          border-radius: 0;
+          left: calc(-.5rem - 1px);
+          position: absolute;
+          width: .5rem;
+          content: "";
+          height: calc(50% + .5rem);
+          top: -.5rem;
+          border-width: 0 0 1px 1px;
+          border-color: #8081a2;
+        }
+
+        &:after {
+          border-style: solid;
+          border-width: 0 0 0 1px;
+          height: 50%;
+          top: 50%;
+          border-radius: 0;
+          left: calc(-.5rem - 1px);
+          position: absolute;
+          width: .5rem;
+          content: "";
+        }
+      }
+
+      .ruleGroup .ruleGroup {
+        &:before,
+        &:after {
+          border-style: solid;
+          border-color: var(--local-branch-line-color);
+        }
+        /* This adds the L shape on the top half of groups
+          |
+          |_ <-- this
+        */
+        &:before {
+          border-width: 0 0 1px 1px;
+        }
+        &:after {
+          border-width: 0 0 0 1px;
+        }
+      }
+
+    }
+    
+    .ruleGroup-header {
+      button[role="combobox"],
+      .ruleGroup-addRule,
+      .ruleGroup-addGroup {
+      }
+    }
+
+    .ruleGroup {
+      border-color: #0000;
+      box-shadow: inset 2px 2px 5px 0px var(--local-group-box-shadow-color, rgba(0, 0, 0, 0.1));
+      padding: 1rem;
+    }
+
+    button, input {
+      /**
+        @apply bg-white;
+        but don't conflict with custom shad components like toggle;
+      */
+      
+    }
+
+    .rule-remove, .ruleGroup-remove {
+      background: none;
+      color: #f639;
+      display: flex;
+      order: -1;
+      text-shadow: 2px 2px 3px rgba(51,51,51,.302)
+    }
+
+    .ruleGroup-addRule {
+      margin-left: auto
+    }
+    .ruleGroup-addGroup, .ruleGroup-addRule {
+      border: 1px solid #0003;
+      /* @apply rounded-full; */
+    }
+
+    .rule {
+      row-gap: 0
+    }
+
+    .queryBuilder-dragHandle {
+      color: #36f9;
+      order: 99;
+      text-shadow: 2px 2px 3px rgba(51,51,51,.302)
+    }
+
+    /**
+      @see {@link https://react-querybuilder.js.org/docs/utils/export#validation}
+      Validation failures are per row.
+      TODO: solve for rendering the validation failure content in all components somewhere.
+    */
+    .queryBuilder-invalid {
+      outline: 1px solid red;
+      /* @apply py-2 rounded; */
+    }
+  }
+}
+
+
+  
