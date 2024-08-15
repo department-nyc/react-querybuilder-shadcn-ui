@@ -1,10 +1,10 @@
-"use client";
+"use client"
 
-import * as React from "react";
-import { isOptionGroupArray } from "react-querybuilder";
-import type { OptionList } from "react-querybuilder";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+import * as React from "react"
+import { isOptionGroupArray } from "react-querybuilder"
+import type { OptionList } from "react-querybuilder"
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -12,13 +12,13 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/components/ui/dropdown-menu"
 
 export type MultiSelectProps = {
-  options?: OptionList;
-  value: string[];
-  onValueChange: (value: string[]) => void;
-};
+  options?: OptionList
+  value: string[]
+  onValueChange: (value: string[]) => void
+}
 
 export function MultiSelect({
   options = [],
@@ -41,7 +41,7 @@ export function MultiSelect({
                     checked
                       ? [...value, opt.name ?? ""]
                       : value.filter((v) => v !== opt.name)
-                  );
+                  )
                 }}
               >
                 {opt.label}
@@ -60,13 +60,13 @@ export function MultiSelect({
                 checked
                   ? [...value, opt.name]
                   : value.filter((v) => v !== opt.name)
-              );
+              )
             }}
           >
             {opt.label}
           </DropdownMenuCheckboxItem>
         ))
-      : null;
+      : null
 
   return (
     <DropdownMenu>
@@ -92,5 +92,5 @@ export function MultiSelect({
         {toDropdownOptions(options)}
       </DropdownMenuContent>
     </DropdownMenu>
-  );
+  )
 }

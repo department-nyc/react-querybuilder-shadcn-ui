@@ -1,16 +1,17 @@
-import type { ComponentPropsWithoutRef } from "react";
+import type { ComponentPropsWithoutRef } from "react"
 import {
   Select,
   SelectContent,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import type { VersatileSelectorProps } from "react-querybuilder";
-import { MultiSelect } from "./custom-value-editors/MultiSelect";
-import { toSelectOptions } from "./utils";
+} from "@/components/ui/select"
+import type { VersatileSelectorProps } from "react-querybuilder"
+import { MultiSelect } from "./custom-value-editors/MultiSelect"
+import { toSelectOptions } from "./utils"
+import { ComboBox } from "./custom-value-editors/ComboBox"
 
 export type ShadcnUiValueSelectorProps = VersatileSelectorProps &
-  ComponentPropsWithoutRef<typeof Select>;
+  ComponentPropsWithoutRef<typeof Select>
 
 export const ShadcnUiValueSelector = ({
   handleOnChange,
@@ -34,11 +35,21 @@ export const ShadcnUiValueSelector = ({
   schema: _schema,
   ...extraProps
 }: ShadcnUiValueSelectorProps) => {
+  const useComboBox = true
+
   return _multiple ? (
     <MultiSelect
       options={options}
       value={value as unknown as string[]}
       onValueChange={handleOnChange}
+    />
+  ) : useComboBox ? (
+    <ComboBox
+      options={options}
+      value={value}
+      disabled={disabled}
+      onValueChange={handleOnChange}
+      {...extraProps}
     />
   ) : (
     <Select
@@ -52,7 +63,7 @@ export const ShadcnUiValueSelector = ({
       </SelectTrigger>
       <SelectContent>{toSelectOptions(options)}</SelectContent>
     </Select>
-  );
-};
+  )
+}
 
-ShadcnUiValueSelector.displayName = "ShadcnUiValueSelector";
+ShadcnUiValueSelector.displayName = "ShadcnUiValueSelector"

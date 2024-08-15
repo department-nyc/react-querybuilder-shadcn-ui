@@ -39,7 +39,7 @@ export const shadcnUiControlElements = {
   valueEditor: ShadcnUiValueEditor,
   notToggle: ShadcnUiNotToggle,
   dragHandle: ShadcnUiDragHandle,
-  
+
   // addGroupAction: (props) => (
   //   <ShadcnUiActionElement {...props}>
   //     <Plus className="w-4 h-4 mr-2" />
