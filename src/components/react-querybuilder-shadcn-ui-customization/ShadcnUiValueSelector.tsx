@@ -74,13 +74,14 @@ export const ShadcnUiValueSelector = ({
   ...extraProps
 }: ShadcnUiValueSelectorProps) => {
   const [options, setOptions] = useState<OptionList>(_options)
-  console.log(_options, options)
 
   useEffect(() => {
     setOptions(_options)
   }, [_options])
 
   const onQueryChange = async (query: string) => {
+    // TODO: Implement dynamic fetching
+    return false
     const options = (await fetchMockOptions(query)) as OptionList
     setOptions(options)
   }
