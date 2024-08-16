@@ -1,21 +1,58 @@
-import type { ComponentPropsWithoutRef } from "react"
+import { useState, useEffect, type ComponentPropsWithoutRef } from "react"
 import {
   Select,
   SelectContent,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import type { VersatileSelectorProps } from "react-querybuilder"
+import type { OptionList, VersatileSelectorProps } from "react-querybuilder"
 import { MultiSelect } from "./custom-value-editors/MultiSelect"
 import { toSelectOptions } from "./utils"
 import { ComboBox } from "./custom-value-editors/ComboBox"
 
 export type ShadcnUiValueSelectorProps = VersatileSelectorProps &
-  ComponentPropsWithoutRef<typeof Select>
+  ComponentPropsWithoutRef<typeof Select> & {
+    combobox?: boolean
+  }
+
+const fetchMockOptions = (query: string) => {
+  const options = [
+    { name: "Accessories", label: "Accessories" },
+    {
+      name: "Accounting, Audit and Tax Services (B2B)",
+      label: "Accounting, Audit and Tax Services (B2B)",
+    },
+    {
+      name: "Accounting, Audit and Tax Services (B2C)",
+      label: "Accounting, Audit and Tax Services (B2C)",
+    },
+    { name: "Aerospace and Defense", label: "Aerospace and Defense" },
+    { name: "Agricultural Chemicals", label: "Agricultural Chemicals" },
+    { name: "Air", label: "Air" },
+    {
+      name: "Alternative Energy Equipment",
+      label: "Alternative Energy Equipment",
+    },
+    { name: "Aluminum Mining", label: "Aluminum Mining" },
+    { name: "Animal Husbandry", label: "Animal Husbandry" },
+  ].map((i) => ({ ...i, value: i.name }))
+
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      const _query = query.trim()
+
+      const selectedOptions = options.filter((option) => {
+        return option.label.toLowerCase().includes(_query.toLowerCase())
+      })
+
+      resolve(selectedOptions)
+    }, Math.random() * 200)
+  })
+}
 
 export const ShadcnUiValueSelector = ({
   handleOnChange,
-  options,
+  options: _options,
   value,
   title,
   disabled,
@@ -31,24 +68,48 @@ export const ShadcnUiValueSelector = ({
   field: _field,
   fieldData: _fieldData,
   multiple: _multiple,
+  combobox: _combobox = true,
   listsAsArrays: _listsAsArrays,
   schema: _schema,
   ...extraProps
 }: ShadcnUiValueSelectorProps) => {
-  const useComboBox = true
+  const [options, setOptions] = useState<OptionList>(_options)
+  console.log(_options, options)
+
+  useEffect(() => {
+    setOptions(_options)
+  }, [_options])
+
+  const onQueryChange = async (query: string) => {
+    const options = (await fetchMockOptions(query)) as OptionList
+    setOptions(options)
+  }
 
   return _multiple ? (
-    <MultiSelect
-      options={options}
-      value={value as unknown as string[]}
-      onValueChange={handleOnChange}
-    />
-  ) : useComboBox ? (
+    _combobox ? (
+      <ComboBox
+        multiselect
+        options={options}
+        value={value as unknown as string[]}
+        disabled={disabled}
+        onValueChange={handleOnChange}
+        onQueryChange={onQueryChange}
+        {...extraProps}
+      />
+    ) : (
+      <MultiSelect
+        options={options}
+        value={value as unknown as string[]}
+        onValueChange={handleOnChange}
+      />
+    )
+  ) : _combobox ? (
     <ComboBox
       options={options}
       value={value}
       disabled={disabled}
       onValueChange={handleOnChange}
+      onQueryChange={onQueryChange}
       {...extraProps}
     />
   ) : (

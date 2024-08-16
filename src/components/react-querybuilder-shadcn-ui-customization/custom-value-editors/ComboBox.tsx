@@ -1,8 +1,7 @@
-import * as React from "react"
 import { Check, ChevronsUpDown } from "lucide-react"
-import { isOptionGroupArray, Option, OptionGroup } from "react-querybuilder"
+import * as React from "react"
+import { isOptionGroupArray } from "react-querybuilder"
 
-import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
   Command,
@@ -17,24 +16,46 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { cn } from "@/lib/utils"
 import { OptionList } from "react-querybuilder"
 
 export type ComboBoxProps = {
+  multiselect?: boolean
   options?: OptionList
-  value: string | undefined
+  value: string | string[] | undefined
   disabled?: boolean
-  onValueChange: (value: string | undefined) => void
+  onValueChange?: (value: string | string[] | undefined) => void
+  onQueryChange?: (query: string) => void
 }
 
-type ComboBoxInternalOption = { label: string; value: string }
+type ComboBoxInternalOption = { label: string; value: string; name: string }
 
 export function ComboBox({
+  multiselect = false,
   options: optionList = [],
   disabled = false,
-  value,
-  onValueChange,
+  value: _value,
+  onValueChange: _onValueChange = () => {},
+  onQueryChange = () => {},
 }: ComboBoxProps) {
   const [open, setOpen] = React.useState(false)
+
+  const value = React.useMemo(() => {
+    return (
+      Array.isArray(_value) && multiselect ? _value : [_value]
+    ) as string[]
+  }, [_value, multiselect])
+
+  const onValueChange = React.useCallback(
+    (value: string[]) => {
+      const newValue = multiselect ? value : value[0]
+      console.log("TODO REMOVE: Handler informed new value", {
+        newValue,
+      })
+      _onValueChange(newValue)
+    },
+    [_onValueChange, multiselect]
+  )
 
   // TODO: Allow Option Groups within combobox
   // Right now we are flatenning everything into a simple array of options
@@ -48,8 +69,12 @@ export function ComboBox({
     ).map((option) => {
       // TODO: Find out how to properly type this
       const _option = option as ComboBoxInternalOption
+
+      const nameOrValue = _option.value || _option.label
+
       return {
-        value: _option.value,
+        name: _option.name || nameOrValue,
+        value: _option.value || nameOrValue,
         label: _option.label,
       }
     })
@@ -65,15 +90,18 @@ export function ComboBox({
           className="w-[200px] justify-between"
           disabled={disabled}
         >
-          {value
-            ? options.find((option) => option.value === value)?.label
+          {value && !multiselect
+            ? options.find((option) => option.value === value[0])?.label
             : "Select options..."}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
         <Command>
-          <CommandInput placeholder="Search options..." />
+          <CommandInput
+            placeholder="Search options..."
+            onValueChange={(query) => onQueryChange(query)}
+          />
           <CommandList>
             <CommandEmpty>No options found.</CommandEmpty>
             <CommandGroup>
@@ -82,7 +110,18 @@ export function ComboBox({
                   key={option.value}
                   value={option.value}
                   onSelect={(currentValue) => {
-                    const newValue = currentValue === value ? "" : currentValue
+                    let newValue: string[] = value
+                    if (!multiselect) {
+                      newValue = [option.value]
+                    } else {
+                      if (currentValue === option.value) {
+                        const included = value.includes(currentValue)
+                        newValue = included
+                          ? value.filter((v) => v !== currentValue)
+                          : value.concat(currentValue)
+                      }
+                    }
+
                     setOpen(false)
                     onValueChange(newValue)
                   }}
@@ -90,7 +129,12 @@ export function ComboBox({
                   <Check
                     className={cn(
                       "mr-2 h-4 w-4",
-                      value === option.value ? "opacity-100" : "opacity-0"
+                      console.log("TODO REMOVE", {
+                        value,
+                        option: option.value,
+                        includes: value.includes(option.value),
+                      }) || "",
+                      value.includes(option.value) ? "opacity-100" : "opacity-0"
                     )}
                   />
                   {option.label}
