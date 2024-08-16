@@ -36,8 +36,8 @@ export function ComboBox({
 }: ComboBoxProps) {
   const [open, setOpen] = React.useState(false)
 
-  console.log({ optionList })
-
+  // TODO: Allow Option Groups within combobox
+  // Right now we are flatenning everything into a simple array of options
   const options: Array<ComboBoxInternalOption> = React.useMemo(() => {
     return (
       isOptionGroupArray(optionList)
