@@ -49,9 +49,6 @@ export function ComboBox({
   const onValueChange = React.useCallback(
     (value: string[]) => {
       const newValue = multiselect ? value : value[0]
-      console.log("TODO REMOVE: Handler informed new value", {
-        newValue,
-      })
       _onValueChange(newValue)
     },
     [_onValueChange, multiselect]
@@ -129,11 +126,6 @@ export function ComboBox({
                   <Check
                     className={cn(
                       "mr-2 h-4 w-4",
-                      console.log("TODO REMOVE", {
-                        value,
-                        option: option.value,
-                        includes: value.includes(option.value),
-                      }) || "",
                       value.includes(option.value) ? "opacity-100" : "opacity-0"
                     )}
                   />
