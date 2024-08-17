@@ -1,35 +1,34 @@
 import {
-  X,
-  Copy,
-  Unlock,
-  Lock,
   ChevronDown,
   ChevronUp,
+  Copy,
+  Lock,
   Plus,
   Trash2,
-} from "lucide-react";
+  Unlock,
+} from "lucide-react"
 import type {
   Classnames,
   Controls,
   FullField,
   Translations,
-} from "react-querybuilder";
-import { getCompatContextProvider } from "react-querybuilder";
-import { ShadcnUiActionElement } from "./ShadcnUiActionElement";
-import { ShadcnUiActionElementIcon } from "./ShadcnUiActionElementIcon";
-import { ShadcnUiValueEditor } from "./ShadcnUiValueEditor";
-import { ShadcnUiValueSelector } from "./ShadcnUiValueSelector";
-import { ShadcnUiNotToggle } from "./ShadcnUiNotToggle";
-import { ShadcnUiDragHandle } from "./ShadcnUiDragHandle";
+} from "react-querybuilder"
+import { getCompatContextProvider } from "react-querybuilder"
+import { ShadcnUiActionElement } from "./ShadcnUiActionElement"
+import { ShadcnUiActionElementIcon } from "./ShadcnUiActionElementIcon"
+import { ShadcnUiDragHandle } from "./ShadcnUiDragHandle"
+import { ShadcnUiNotToggle } from "./ShadcnUiNotToggle"
+import { ShadcnUiValueEditor } from "./ShadcnUiValueEditor"
+import { ShadcnUiValueSelector } from "./ShadcnUiValueSelector"
 
-import "./styles.css";
+import "./styles.css"
 
-export * from "./ShadcnUiActionElement";
-export * from "./ShadcnUiValueSelector";
+export * from "./ShadcnUiActionElement"
+export * from "./ShadcnUiValueSelector"
 
 export const shadcnUiControlClassnames = {
   ruleGroup: "rule-group rounded-lg shadow-sm border bg-background",
-} satisfies Partial<Classnames>;
+} satisfies Partial<Classnames>
 
 export const shadcnUiControlElements = {
   actionElement: ShadcnUiActionElement,
@@ -46,7 +45,7 @@ export const shadcnUiControlElements = {
   //     Add group
   //   </ShadcnUiActionElement>
   // ),
-} satisfies Partial<Controls<FullField, string>>;
+} satisfies Partial<Controls<FullField, string>>
 
 export const shadcnUiTranslations = {
   addRule: {
@@ -73,7 +72,7 @@ export const shadcnUiTranslations = {
   lockRuleDisabled: { label: <Lock className="w-4 h-4" /> },
   shiftActionDown: { label: <ChevronDown className="w-4 h-4" /> },
   shiftActionUp: { label: <ChevronUp className="w-4 h-4" /> },
-} satisfies Partial<Translations>;
+} satisfies Partial<Translations>
 
 export const QueryBuilderShadcnUi = getCompatContextProvider({
   // key: "shadcn/ui",
@@ -82,4 +81,4 @@ export const QueryBuilderShadcnUi = getCompatContextProvider({
   controlElements: shadcnUiControlElements,
   translations: shadcnUiTranslations,
   enableDragAndDrop: true,
-});
+})

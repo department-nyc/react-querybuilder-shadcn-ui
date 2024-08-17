@@ -1,25 +1,28 @@
-import React, { useEffect, useState } from "react";
+import { useState } from "react"
 
-import { add, defaultOperators, Field, formatQuery, QueryBuilder } from "react-querybuilder";
-import { QueryBuilderDnD } from "@react-querybuilder/dnd";
-import * as ReactDnD from "react-dnd";
-import * as ReactDndHtml5Backend from "react-dnd-html5-backend";
-
+import { QueryBuilderDnD } from "@react-querybuilder/dnd"
+import * as ReactDnD from "react-dnd"
+import * as ReactDndHtml5Backend from "react-dnd-html5-backend"
+import {
+  add,
+  defaultOperators,
+  Field,
+  formatQuery,
+  QueryBuilder,
+} from "react-querybuilder"
 
 const values = [
   { name: "option1", label: "New York City" },
   { name: "option2", label: "Chicago" },
   { name: "option3", label: "Seattle" },
   { name: "option4", label: "Portland" },
-];
+]
 
 const timeValues = [
   { name: "LM", label: "Last month" },
   { name: "L3M", label: "Last 3 months" },
   { name: "L6M", label: "Last 6 months" },
 ]
-
-
 
 const fields: Field[] = [
   { name: "city", label: "City", valueEditorType: "select", values },
@@ -42,21 +45,21 @@ const fields: Field[] = [
     inputType: "datetime-local",
   },
   { name: "time", label: "time", inputType: "time" },
-  { name: "multiValueSources", label: "Multi Value Sources", valueSources: ["value", "field"] },
+  {
+    name: "multiValueSources",
+    label: "Multi Value Sources",
+    valueSources: ["value", "field"],
+  },
   {
     name: "webTrafficGrowth",
     label: "Web Traffic Growth",
     // TODO: TS
     valueEditorType: "multiInputTest" as any,
-    values: timeValues
+    values: timeValues,
   },
-];
-
-const operators = [
-  ...defaultOperators,
 ]
 
-
+const operators = [...defaultOperators]
 
 const defaultQuery = {
   combinator: "and",
@@ -73,10 +76,10 @@ const defaultQuery = {
           combinator: "and",
           rules: [
             { field: "date", operator: "=", value: "2023-01-01" },
-            { field: "time", operator: "=", value: "09:00" }
-          ]
-        }
-      ]
+            { field: "time", operator: "=", value: "09:00" },
+          ],
+        },
+      ],
     },
     // { field: "date", operator: "=", value: "" },
     // { field: "datetime-local", operator: "=", value: "" },
@@ -85,12 +88,10 @@ const defaultQuery = {
     // { field: "select", operator: "between", value: "option2,option4" },
     // { field: "field", operator: "=", value: "text", valueSource: "field" },
   ],
-};
-
-
+}
 
 /**
- * Example of matching original designs using  
+ * Example of matching original designs using
  * - 1st tier +condition/group to bottom via grid
  * - 2nd tier Popups on sub queries to add a rule or group (but note it takes 2 clicks to add )
  * - Takes much more customization
@@ -111,8 +112,8 @@ export const WithLeftAlign = () => {
             fields={fields}
             operators={operators}
             combinators={[
-              { name: 'and', label: 'AND' },
-              { name: 'or', label: 'OR' }
+              { name: "and", label: "AND" },
+              { name: "or", label: "OR" },
             ]}
             addRuleToNewGroups
             showCombinatorsBetweenRules
@@ -130,23 +131,20 @@ export const WithLeftAlign = () => {
                   return <ShadcnUiActionElementGroupPopup {...props} />
                 }
                 return <ShadcnUiActionElement {...props} />
-              }
+              },
             }}
             defaultQuery={defaultQuery}
           />
         </QueryBuilderDnD>
       </QueryBuilderShadcnUi>
     </div>
-  );
+  )
 }
-
-
-
 
 /**
  * This is an example of react-querybuilder OOTB alternate layout
  * that may be of interest/more intuitive
- *   
+ *
  * @see {@link https://react-querybuilder.js.org/}
  */
 export const AlternateLayout = () => {
@@ -161,12 +159,13 @@ export const AlternateLayout = () => {
       <QueryBuilderShadcnUi>
         <QueryBuilderDnD dnd={{ ...ReactDnD, ...ReactDndHtml5Backend }}>
           <QueryBuilder
-
-            controlClassnames={{ queryBuilder: [
-              "queryBuilderWithAlternateLayout",
-              "queryBuilder-branches",
-              "with-branch-lines"
-            ]}}
+            controlClassnames={{
+              queryBuilder: [
+                "queryBuilderWithAlternateLayout",
+                "queryBuilder-branches",
+                "with-branch-lines",
+              ],
+            }}
             showCloneButtons
             fields={fields}
             operators={operators}
@@ -175,7 +174,7 @@ export const AlternateLayout = () => {
         </QueryBuilderDnD>
       </QueryBuilderShadcnUi>
     </div>
-  );
+  )
 }
 
 /**
@@ -198,16 +197,17 @@ export const ShowQueryBuilderMoreFeatures = () => {
       <QueryBuilderShadcnUi>
         <QueryBuilderDnD dnd={{ ...ReactDnD, ...ReactDndHtml5Backend }}>
           <QueryBuilder
-            controlClassnames={{ queryBuilder: [
-              "queryBuilderWithAlternateLayout",
-              "queryBuilder-branches",
-              "with-branch-lines"
-            ]}}
+            controlClassnames={{
+              queryBuilder: [
+                "queryBuilderWithAlternateLayout",
+                "queryBuilder-branches",
+                "with-branch-lines",
+              ],
+            }}
             showCloneButtons
             showLockButtons
             showNotToggle
             showShiftActions
-            
             fields={fields}
             operators={operators}
             defaultQuery={defaultQuery}
@@ -215,168 +215,179 @@ export const ShowQueryBuilderMoreFeatures = () => {
         </QueryBuilderDnD>
       </QueryBuilderShadcnUi>
     </div>
-  );
+  )
 }
-
-
-
-
 
 const fieldsForBen: Field[] = [
   {
-    name: 'name',
-    label: 'Name',
-    valueEditorType: 'text',
-    
+    name: "name",
+    label: "Name",
+    valueEditorType: "text",
+
     operators: [
       {
         name: "=",
-        label: 'is',
-      }
+        label: "is",
+      },
     ],
 
     validator: (q) => ({
-      valid: q.value !== 'invalid',
-      reasons: ['text must not be "invalid"']
-    })
+      valid: q.value !== "invalid",
+      reasons: ['text must not be "invalid"'],
+    }),
   },
   {
-    name: 'domain',
-    label: 'Domain',
-    valueEditorType: 'text',
+    name: "domain",
+    label: "Domain",
+    valueEditorType: "text",
     operators: [
-      { name: '=', label: 'is' },
-      { name: '!=', label: 'is not' }
+      { name: "=", label: "is" },
+      { name: "!=", label: "is not" },
     ],
   },
   {
-    name: 'isPortfolio',
-    label: 'Is Portfolio',
-    valueEditorType: 'select',
+    name: "isPortfolio",
+    label: "Is Portfolio",
+    valueEditorType: "select",
     values: [
-      { name: 'True', label: 'True' },
-      { name: 'False', label: 'False' },
+      { name: "True", label: "True" },
+      { name: "False", label: "False" },
     ],
     operators: [
-      { name: '=', label: 'is' },
-      { name: '!=', label: 'is not' }
-    ],
-
-  },
-  {
-    name: 'description',
-    label: 'Description',
-    valueEditorType: 'text',
-    operators: [
-      { name: 'contains', label: 'contains' },
-      { name: 'doesNotContain', label: 'does not contain' }
+      { name: "=", label: "is" },
+      { name: "!=", label: "is not" },
     ],
   },
   {
-    name: 'industrySector',
-    label: 'Industry Sector',
-    valueEditorType: 'multiselect',
+    name: "description",
+    label: "Description",
+    valueEditorType: "text",
+    operators: [
+      { name: "contains", label: "contains" },
+      { name: "doesNotContain", label: "does not contain" },
+    ],
+  },
+  {
+    name: "industrySector",
+    label: "Industry Sector",
+    valueEditorType: "multiselect",
     values: [
-      { name: 'Business Products and Services (B2B)', label: 'Business Products and Services (B2B)' },
-      { name: 'Consumer Products and Services (B2C)', label: 'Consumer Products and Services (B2C)' },
-      { name: 'Energy', label: 'Energy' },
+      {
+        name: "Business Products and Services (B2B)",
+        label: "Business Products and Services (B2B)",
+      },
+      {
+        name: "Consumer Products and Services (B2C)",
+        label: "Consumer Products and Services (B2C)",
+      },
+      { name: "Energy", label: "Energy" },
     ],
     operators: [
-      { name: '=', label: 'is' },
-      { name: '!=', label: 'is not' }
+      { name: "=", label: "is" },
+      { name: "!=", label: "is not" },
     ],
   },
   {
-    name: 'industryGroup',
-    label: 'Industry Group',
-    valueEditorType: 'multiselect',
+    name: "industryGroup",
+    label: "Industry Group",
+    valueEditorType: "multiselect",
     values: [
-      { name: 'Agriculture', label: 'Agriculture' },
-      { name: 'Apparel and Accessories', label: 'Apparel and Accessories' },
-      { name: 'Capital Markets/Institutions', label: 'Capital Markets/Institutions' },
-      { name: 'Chemicals and Gases', label: 'Chemicals and Gases' },
+      { name: "Agriculture", label: "Agriculture" },
+      { name: "Apparel and Accessories", label: "Apparel and Accessories" },
+      {
+        name: "Capital Markets/Institutions",
+        label: "Capital Markets/Institutions",
+      },
+      { name: "Chemicals and Gases", label: "Chemicals and Gases" },
     ],
     operators: [
-      { name: '=', label: 'is' },
-      { name: '!=', label: 'is not' }
+      { name: "=", label: "is" },
+      { name: "!=", label: "is not" },
     ],
   },
   {
-    name: 'industryCode',
-    label: 'Industry Code',
-    valueEditorType: 'multiselect',
+    name: "industryCode",
+    label: "Industry Code",
+    valueEditorType: "multiselect",
     values: [
-      { name: 'Accessories', label: 'Accessories' },
-      { name: 'Accounting, Audit and Tax Services (B2B)', label: 'Accounting, Audit and Tax Services (B2B)' },
-      { name: 'Accounting, Audit and Tax Services (B2C)', label: 'Accounting, Audit and Tax Services (B2C)' },
-      { name: 'Aerospace and Defense', label: 'Aerospace and Defense' },
-      { name: 'Agricultural Chemicals', label: 'Agricultural Chemicals' },
-      { name: 'Air', label: 'Air' },
-      { name: 'Alternative Energy Equipment', label: 'Alternative Energy Equipment' },
-      { name: 'Aluminum Mining', label: 'Aluminum Mining' },
-      { name: 'Animal Husbandry', label: 'Animal Husbandry' },
+      { name: "Accessories", label: "Accessories" },
+      {
+        name: "Accounting, Audit and Tax Services (B2B)",
+        label: "Accounting, Audit and Tax Services (B2B)",
+      },
+      {
+        name: "Accounting, Audit and Tax Services (B2C)",
+        label: "Accounting, Audit and Tax Services (B2C)",
+      },
+      { name: "Aerospace and Defense", label: "Aerospace and Defense" },
+      { name: "Agricultural Chemicals", label: "Agricultural Chemicals" },
+      { name: "Air", label: "Air" },
+      {
+        name: "Alternative Energy Equipment",
+        label: "Alternative Energy Equipment",
+      },
+      { name: "Aluminum Mining", label: "Aluminum Mining" },
+      { name: "Animal Husbandry", label: "Animal Husbandry" },
     ],
     operators: [
-      { name: '=', label: 'is' },
-      { name: '!=', label: 'is not' }
+      { name: "=", label: "is" },
+      { name: "!=", label: "is not" },
     ],
   },
   {
-    name: 'foundingYear',
-    label: 'Founding Year',
-    inputType: 'number',
+    name: "foundingYear",
+    label: "Founding Year",
+    inputType: "number",
     operators: [
-      { name: '<', label: 'less than' },
-      { name: 'between', label: 'between' },
-      { name: '>', label: 'greater than' }
+      { name: "<", label: "less than" },
+      { name: "between", label: "between" },
+      { name: ">", label: "greater than" },
     ],
     validator: (q) => {
-      console.log("Validating", q);
+      console.log("Validating", q)
 
-      const years = q.value.split(',').map((year:string) => Number(year.trim()));
-      if (years.some((year:number) => year < 1500)) {
+      const years = q.value
+        .split(",")
+        .map((year: string) => Number(year.trim()))
+      if (years.some((year: number) => year < 1500)) {
         return {
           valid: false,
-          reasons: ["that's way too old", "second reason"]
+          reasons: ["that's way too old", "second reason"],
         }
       }
       return {
-        valid: true
+        valid: true,
       }
-    }
+    },
   },
   {
     name: "webTrafficGrowth",
     label: "Web Traffic Growth",
     // TODO: TS
     valueEditorType: "multiInputTest" as any,
-    values: timeValues
+    values: timeValues,
   },
-
 ]
 
-export const WithRealisticDataForBen = ({
-
-}) => {
-
-  const [query, setQuery] = useState({});
+export const WithRealisticDataForBen = ({}) => {
+  const [query, setQuery] = useState({})
 
   const handleQueryChange = (query: any) => {
-    setQuery(query);
-    console.log('Query:', query);
-
-  };
-
+    setQuery(query)
+    console.log("Query:", query)
+  }
 
   return (
     <QueryBuilderShadcnUi>
       <QueryBuilderDnD dnd={{ ...ReactDnD, ...ReactDndHtml5Backend }}>
         <QueryBuilder
-          controlClassnames={{ queryBuilder: [
-            "queryBuilderWithAlternateLayout",
-            "queryBuilder-branches",
-            "with-branch-lines"
-          ]}}
+          controlClassnames={{
+            queryBuilder: [
+              "queryBuilderWithAlternateLayout",
+              "queryBuilder-branches",
+              "with-branch-lines",
+            ],
+          }}
           fields={fieldsForBen}
           // operators={operators}
           onQueryChange={handleQueryChange}
@@ -385,8 +396,9 @@ export const WithRealisticDataForBen = ({
           defaultQuery={{
             combinator: "and",
             rules: [
-              { 
-                field: "webTrafficGrowth", operator: ">", 
+              {
+                field: "webTrafficGrowth",
+                operator: ">",
                 value: {
                   value: "30%",
                   na: true,
@@ -395,99 +407,115 @@ export const WithRealisticDataForBen = ({
                 timeValues,
               },
               { field: "name", label: "Name", operator: "=", value: "invalid" },
-              { field: "isPortfolio", label: "Is Portfolio", operator: "=", value: "True" },
+              {
+                field: "isPortfolio",
+                label: "Is Portfolio",
+                operator: "=",
+                value: "True",
+              },
               {
                 combinator: "and",
                 rules: [
                   { field: "name", operator: "=", value: "Acme Corporation" },
                   { field: "domain", operator: "!=", value: "example.com" },
                   { field: "isPortfolio", operator: "=", value: "True" },
-                  { field: "description", operator: "contains", value: "innovative technology" },
-                  { 
-                    field: "industrySector", 
-                    operator: "=", 
-                    value: ["Business Products and Services (B2B)", "Energy"]
+                  {
+                    field: "description",
+                    operator: "contains",
+                    value: "innovative technology",
                   },
-                  { 
-                    field: "industryGroup", 
-                    operator: "!=", 
-                    value: ["Agriculture", "Capital Markets/Institutions"]
+                  {
+                    field: "industrySector",
+                    operator: "=",
+                    value: ["Business Products and Services (B2B)", "Energy"],
                   },
-                  { 
-                    field: "industryCode", 
-                    operator: "=", 
-                    value: ["Aerospace and Defense", "Alternative Energy Equipment"]
+                  {
+                    field: "industryGroup",
+                    operator: "!=",
+                    value: ["Agriculture", "Capital Markets/Institutions"],
                   },
-                  { field: "foundingYear", operator: "between", value: "2000,2010" },
-                  { 
-                    field: "webTrafficGrowth", 
-                    operator: ">", 
+                  {
+                    field: "industryCode",
+                    operator: "=",
+                    value: [
+                      "Aerospace and Defense",
+                      "Alternative Energy Equipment",
+                    ],
+                  },
+                  {
+                    field: "foundingYear",
+                    operator: "between",
+                    value: "2000,2010",
+                  },
+                  {
+                    field: "webTrafficGrowth",
+                    operator: ">",
                     value: {
                       value: "25%",
                       na: false,
                       selectedTime: "L6M",
-                    }
-                  }
-                ]
-              }
+                    },
+                  },
+                ],
+              },
             ],
           }}
         />
 
         <div className="prose my-20">
-          {['json_without_ids', 'jsonlogic', 'parameterized'].map(format => {
+          {["json_without_ids", "jsonlogic", "parameterized"].map((format) => {
             return (
               <div key={format}>
-                <h3>
-                  Formatted query: {format}
-                </h3>
+                <h3>Formatted query: {format}</h3>
                 <pre className="text-xs">
                   {renderFormattedJson(query, format)}
                 </pre>
               </div>
             )
-          })} 
+          })}
         </div>
       </QueryBuilderDnD>
     </QueryBuilderShadcnUi>
   )
 }
 
-
-export const MultiInputTest = ({
-
-}) => {
-
-  const [query, setQuery] = useState({});
+export const MultiInputTest = ({}) => {
+  const [query, setQuery] = useState({})
 
   const handleQueryChange = (query: any) => {
-    setQuery(query);
-    console.log('Query:', query);
-
-  };
-
+    setQuery(query)
+    console.log("Query:", query)
+  }
 
   return (
     <QueryBuilderShadcnUi>
       <QueryBuilderDnD dnd={{ ...ReactDnD, ...ReactDndHtml5Backend }}>
         <QueryBuilder
-          controlClassnames={{ queryBuilder: [
-            "queryBuilderWithAlternateLayout",
-            "queryBuilder-branches",
-            "with-branch-lines"
-          ]}}
+          controlClassnames={{
+            queryBuilder: [
+              "queryBuilderWithAlternateLayout",
+              "queryBuilder-branches",
+              "with-branch-lines",
+            ],
+          }}
           fields={fields}
           operators={operators}
           onQueryChange={handleQueryChange}
           defaultQuery={{
             combinator: "and",
             rules: [
-              { field: "text", label: "City", operator: "=", value: "New York City" },
+              {
+                field: "text",
+                label: "City",
+                operator: "=",
+                value: "New York City",
+              },
               {
                 combinator: "and",
                 rules: [
-                  { 
-                    field: "webTrafficGrowth", operator: ">", 
+                  {
+                    field: "webTrafficGrowth",
+                    operator: ">",
                     value: {
                       value: "30%",
                       na: true,
@@ -495,7 +523,9 @@ export const MultiInputTest = ({
                     },
                     timeValues,
                   },
-                  { field: "webTrafficGrowth", operator: ">", 
+                  {
+                    field: "webTrafficGrowth",
+                    operator: ">",
                     value: {
                       value: "0%",
                       na: false,
@@ -503,66 +533,60 @@ export const MultiInputTest = ({
                     },
                     timeValues,
                   },
-                ]
+                ],
               },
             ],
           }}
         />
 
         <div className="prose my-20">
-          {['json_without_ids', 'jsonlogic', 'parameterized'].map(format => {
+          {["json_without_ids", "jsonlogic", "parameterized"].map((format) => {
             return (
               <div key={format}>
-                <h3>
-                  Formatted query: {format}
-                </h3>
+                <h3>Formatted query: {format}</h3>
                 <pre className="text-xxs">
                   {renderFormattedJson(query, format)}
                 </pre>
               </div>
             )
-          })} 
+          })}
         </div>
       </QueryBuilderDnD>
     </QueryBuilderShadcnUi>
   )
 }
 
-function renderFormattedJson (query: any, format: string) {
+function renderFormattedJson(query: any, format: string) {
   if (isEmpty(query)) {
     return null
   }
-  const formatted = formatQuery(query, format as any);
+  const formatted = formatQuery(query, format as any)
   // sometimes formatter returns strings
-  const json = typeof formatted === 'string' ? JSON.parse(formatted) : formatted;
-  return JSON.stringify(json, null, 2);
+  const json = typeof formatted === "string" ? JSON.parse(formatted) : formatted
+  return JSON.stringify(json, null, 2)
 }
-
-
 
 /**
  * Test Popup
  */
-import { Button } from "@/components/ui/button";
-import type { ActionWithRulesAndAddersProps, } from "react-querybuilder";
+import { Button } from "@/components/ui/button"
+import type { ActionWithRulesAndAddersProps } from "react-querybuilder"
 
+import { ModeToggle } from "@/components/mode-toggle"
+import { QueryBuilderShadcnUi } from "@/components/react-querybuilder-shadcn-ui-customization/QueryBuilderShadcnUi"
+import { ShadcnUiActionElement } from "@/components/react-querybuilder-shadcn-ui-customization/ShadcnUiActionElement"
+import { ThemeProvider } from "@/components/theme-provider"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import clsx from "clsx"
+import { isEmpty } from "lodash"
 import { CirclePlus } from "lucide-react"
-import clsx from "clsx";
-import { isEmpty } from "lodash";
-import { QueryBuilderShadcnUi } from "@/components/react-querybuilder-shadcn-ui-customization/QueryBuilderShadcnUi";
-import { ShadcnUiActionElement } from "@/components/react-querybuilder-shadcn-ui-customization/ShadcnUiActionElement";
-import { ThemeProvider } from "@/components/theme-provider";
-import { ModeToggle } from "@/components/mode-toggle";
 
-
-
-export type ShadcnUiActionProps = ActionWithRulesAndAddersProps 
+export type ShadcnUiActionProps = ActionWithRulesAndAddersProps
 
 const ShadcnUiActionElementGroupPopup = ({
   className,
@@ -582,26 +606,25 @@ const ShadcnUiActionElementGroupPopup = ({
   // schema: _schema,
   ...props
 }: ShadcnUiActionProps) => {
-
   const handleAddGroup = (e: Event) => {
-    handleOnClick(e as any); // this expects a react event but DropDownEvent expects Event
-  };
+    handleOnClick(e as any) // this expects a react event but DropDownEvent expects Event
+  }
 
   const handleAddRule = (e: Event) => {
     props.schema.dispatchQuery(
-      add(props.schema.getQuery() as any, { field: '', operator: '=', value: '' }, props.path)
-    );
-  };
-
-  const isAnd = () => {
-
+      add(
+        props.schema.getQuery() as any,
+        { field: "", operator: "=", value: "" },
+        props.path
+      )
+    )
   }
+
+  const isAnd = () => {}
   // const helperText = ? 'Any of the following are true...' : 'All of the following are false...'
   return (
     <>
-      <div className="text-grey-dark">
-        Any of the following are true...
-      </div>
+      <div className="text-grey-dark">Any of the following are true...</div>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="secondary" className={clsx(className, "ml-auto")}>
@@ -610,7 +633,9 @@ const ShadcnUiActionElementGroupPopup = ({
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuItem onSelect={handleAddGroup}>
-            {disabledTranslation && disabled ? disabledTranslation.label : "Add Condition Group"}
+            {disabledTranslation && disabled
+              ? disabledTranslation.label
+              : "Add Condition Group"}
           </DropdownMenuItem>
           <DropdownMenuItem onSelect={handleAddRule}>
             Add Condition
@@ -621,11 +646,7 @@ const ShadcnUiActionElementGroupPopup = ({
   )
 }
 
-ShadcnUiActionElement.displayName = "ShadcnUiActionElement";
-
-
-
-
+ShadcnUiActionElement.displayName = "ShadcnUiActionElement"
 
 export default function App() {
   return (
@@ -638,5 +659,5 @@ export default function App() {
         </div>
       </div>
     </ThemeProvider>
-  );
+  )
 }

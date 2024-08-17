@@ -1,21 +1,21 @@
-import type { ValueEditorProps } from "react-querybuilder";
-import { cn } from "@/lib/utils";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea";
+import type { ValueEditorProps } from "react-querybuilder"
+import { cn } from "@/lib/utils"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Switch } from "@/components/ui/switch"
+import { Textarea } from "@/components/ui/textarea"
 import {
   getFirstOption,
   standardClassnames,
   useValueEditor,
-} from "react-querybuilder";
+} from "react-querybuilder"
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type ShadcnUiValueEditorProps = ValueEditorProps & {
-  extraProps?: Record<string, any>;
-};
+  extraProps?: Record<string, any>
+}
 
 export const ShadcnUiValueEditor = (allProps: ShadcnUiValueEditorProps) => {
   const {
@@ -38,7 +38,7 @@ export const ShadcnUiValueEditor = (allProps: ShadcnUiValueEditorProps) => {
       .valueSelector,
     extraProps,
     ...props
-  } = allProps;
+  } = allProps
 
   const { valueAsArray, multiValueHandler } = useValueEditor({
     handleOnChange,
@@ -49,16 +49,16 @@ export const ShadcnUiValueEditor = (allProps: ShadcnUiValueEditorProps) => {
     listsAsArrays,
     parseNumbers,
     values,
-  });
+  })
 
   if (operator === "null" || operator === "notNull") {
-    return null;
+    return null
   }
 
-  const placeHolderText = fieldData?.placeholder ?? "";
+  const placeHolderText = fieldData?.placeholder ?? ""
   const inputTypeCoerced = ["in", "notIn"].includes(operator)
     ? "text"
-    : inputType || "text";
+    : inputType || "text"
 
   if (
     (operator === "between" || operator === "notBetween") &&
@@ -77,7 +77,7 @@ export const ShadcnUiValueEditor = (allProps: ShadcnUiValueEditorProps) => {
             onChange={(e) => multiValueHandler(e.target.value, i)}
             {...extraProps}
           />
-        );
+        )
       }
       return (
         <SelectorComponent
@@ -90,8 +90,8 @@ export const ShadcnUiValueEditor = (allProps: ShadcnUiValueEditorProps) => {
           options={values}
           listsAsArrays={listsAsArrays}
         />
-      );
-    });
+      )
+    })
     return (
       <span
         data-testid={testID}
@@ -102,7 +102,7 @@ export const ShadcnUiValueEditor = (allProps: ShadcnUiValueEditorProps) => {
         {separator}
         {editors[1]}
       </span>
-    );
+    )
   }
 
   switch (type) {
@@ -117,7 +117,7 @@ export const ShadcnUiValueEditor = (allProps: ShadcnUiValueEditorProps) => {
           handleOnChange={handleOnChange}
           options={values}
         />
-      );
+      )
 
     case "multiselect":
       return (
@@ -131,7 +131,7 @@ export const ShadcnUiValueEditor = (allProps: ShadcnUiValueEditorProps) => {
           options={values}
           multiple
         />
-      );
+      )
 
     case "textarea":
       return (
@@ -145,7 +145,7 @@ export const ShadcnUiValueEditor = (allProps: ShadcnUiValueEditorProps) => {
           onChange={(e) => handleOnChange(e.target.value)}
           {...extraProps}
         />
-      );
+      )
 
     case "switch":
       return (
@@ -157,7 +157,7 @@ export const ShadcnUiValueEditor = (allProps: ShadcnUiValueEditorProps) => {
           onCheckedChange={handleOnChange}
           {...extraProps}
         />
-      );
+      )
 
     case "checkbox":
       return (
@@ -170,7 +170,7 @@ export const ShadcnUiValueEditor = (allProps: ShadcnUiValueEditorProps) => {
           checked={!!value}
           {...extraProps}
         />
-      );
+      )
 
     case "radio":
       return (
@@ -189,7 +189,7 @@ export const ShadcnUiValueEditor = (allProps: ShadcnUiValueEditorProps) => {
             </div>
           ))}
         </RadioGroup>
-      );
+      )
   }
 
   return (
@@ -203,7 +203,7 @@ export const ShadcnUiValueEditor = (allProps: ShadcnUiValueEditorProps) => {
       onChange={(e) => handleOnChange(e.target.value)}
       {...extraProps}
     />
-  );
-};
+  )
+}
 
-ShadcnUiValueEditor.displayName = "ShadcnUiValueEditor";
+ShadcnUiValueEditor.displayName = "ShadcnUiValueEditor"
