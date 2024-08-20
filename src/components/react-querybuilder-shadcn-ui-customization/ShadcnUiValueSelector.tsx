@@ -1,4 +1,9 @@
-import { useState, useEffect, type ComponentPropsWithoutRef } from "react"
+import {
+  useState,
+  useEffect,
+  type ComponentPropsWithoutRef,
+  useCallback,
+} from "react"
 import {
   Select,
   SelectContent,
@@ -9,6 +14,7 @@ import type { OptionList, VersatileSelectorProps } from "react-querybuilder"
 import { MultiSelect } from "./custom-value-editors/MultiSelect"
 import { toSelectOptions } from "./utils"
 import { ComboBox } from "./custom-value-editors/ComboBox"
+import { debounce } from "lodash"
 
 export type ShadcnUiValueSelectorProps = VersatileSelectorProps &
   ComponentPropsWithoutRef<typeof Select> & {
@@ -50,41 +56,49 @@ const fetchMockOptions = (query: string) => {
   })
 }
 
-export const ShadcnUiValueSelector = ({
-  handleOnChange,
-  options: _options,
-  value,
-  title,
-  disabled,
-  // Props that should not be in extraProps
-  testID: _testID,
-  rule: _rule,
-  rules: _rules,
-  level: _level,
-  path: _path,
-  context: _context,
-  validation: _validation,
-  operator: _operator,
-  field: _field,
-  fieldData: _fieldData,
-  multiple: _multiple,
-  combobox: _combobox = true,
-  listsAsArrays: _listsAsArrays,
-  schema: _schema,
-  ...extraProps
-}: ShadcnUiValueSelectorProps) => {
+export const ShadcnUiValueSelector = (props: ShadcnUiValueSelectorProps) => {
+  const {
+    handleOnChange,
+    options: _options,
+    value,
+    title,
+    disabled,
+    // Props that should not be in extraProps
+    testID: _testID,
+    rule: _rule,
+    rules: _rules,
+    level: _level,
+    path: _path,
+    context: _context,
+    validation: _validation,
+    operator: _operator,
+    field: _field,
+    fieldData: _fieldData,
+    multiple: _multiple,
+    combobox: _combobox = true,
+    listsAsArrays: _listsAsArrays,
+    schema: _schema,
+    ...extraProps
+  } = props
+
   const [options, setOptions] = useState<OptionList>(_options)
 
   useEffect(() => {
     setOptions(_options)
   }, [_options])
 
-  const onQueryChange = async (query: string) => {
-    // TODO: Implement dynamic fetching
-    return false
-    const options = (await fetchMockOptions(query)) as OptionList
-    setOptions(options)
-  }
+  const onQueryChange = useCallback(
+    debounce(async (query: string) => {
+      const { fetchValues } = _options as any
+      if (fetchValues) {
+        const newOptions = (await fetchValues(query)) as OptionList
+        setOptions(newOptions)
+      } else {
+        setOptions(_options)
+      }
+    }, 100),
+    [_options]
+  )
 
   return _multiple ? (
     _combobox ? (

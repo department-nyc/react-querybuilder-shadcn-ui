@@ -291,15 +291,15 @@ const fieldsForBen: Field[] = [
     name: "industryGroup",
     label: "Industry Group",
     valueEditorType: "multiselect",
-    values: [
-      { name: "Agriculture", label: "Agriculture" },
-      { name: "Apparel and Accessories", label: "Apparel and Accessories" },
-      {
-        name: "Capital Markets/Institutions",
-        label: "Capital Markets/Institutions",
+    values: {
+      fetchValues: async (query: string) => {
+        const response = await fetch(
+          `http://universities.hipolabs.com/search?name=${query}`
+        )
+        const data = await response.json()
+        return data.map((i: any) => ({ ...i, value: i.name, label: i.name }))
       },
-      { name: "Chemicals and Gases", label: "Chemicals and Gases" },
-    ],
+    },
     operators: [
       { name: "=", label: "is" },
       { name: "!=", label: "is not" },
