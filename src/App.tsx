@@ -296,7 +296,7 @@ const fieldsForBen: Field[] = [
         const response = await fetch(
           `http://universities.hipolabs.com/search?name=${query}`
         )
-        const data = await response.json()
+        const data = take(await response.json(), 30)
         return data.map((i: any) => ({ ...i, value: i.name, label: i.name }))
       },
     },
@@ -583,7 +583,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import clsx from "clsx"
-import { isEmpty } from "lodash"
+import { isEmpty, take } from "lodash"
 import { CirclePlus } from "lucide-react"
 
 export type ShadcnUiActionProps = ActionWithRulesAndAddersProps

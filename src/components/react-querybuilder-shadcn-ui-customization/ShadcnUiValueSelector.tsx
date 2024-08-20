@@ -14,7 +14,7 @@ import type { OptionList, VersatileSelectorProps } from "react-querybuilder"
 import { MultiSelect } from "./custom-value-editors/MultiSelect"
 import { toSelectOptions } from "./utils"
 import { ComboBox } from "./custom-value-editors/ComboBox"
-import { debounce } from "lodash"
+import { debounce, isEmpty } from "lodash"
 
 export type ShadcnUiValueSelectorProps = VersatileSelectorProps &
   ComponentPropsWithoutRef<typeof Select> & {
@@ -79,23 +79,57 @@ export const ShadcnUiValueSelector = ({
   schema: _schema,
   ...extraProps
 }: ShadcnUiValueSelectorProps) => {
-  const [options, setOptions] = useState<OptionList>(_options)
+  const [options, setOptions] = useState<OptionList>([])
 
   useEffect(() => {
-    setOptions(_options)
+    setOptions(_options.fetchValues ? [] : _options)
   }, [_options])
 
   const onQueryChange = useCallback(
     debounce(async (query: string) => {
       const { fetchValues } = _options as any
       if (fetchValues) {
-        const newOptions = (await fetchValues(query)) as OptionList
-        setOptions(newOptions)
+        const newOptions = isEmpty(query)
+          ? []
+          : ((await fetchValues(query)) as OptionList)
+
+        if (_multiple) {
+          const values = value as string[]
+          // Keep old selected options
+          const oldOptions = options
+          const oldSelectedOptions = oldOptions.filter((option) => {
+            return values.includes(option.value)
+          })
+
+          const newOptionsDict = newOptions.reduce((acc, option) => {
+            acc[option.value] = option
+            return acc
+          }, {})
+
+          const newAndOldOptions = [
+            ...newOptions,
+            ...oldSelectedOptions.filter((option) => {
+              return isEmpty(newOptionsDict[option.value])
+            }),
+          ]
+
+          console.log("newAndOldOptions", {
+            values,
+            oldOptions,
+            oldSelectedOptions,
+            newOptions,
+            newAndOldOptions,
+          })
+
+          setOptions(newAndOldOptions)
+        } else {
+          setOptions(newOptions)
+        }
       } else {
         setOptions(_options)
       }
     }, 100),
-    [_options]
+    [_options, options]
   )
 
   return _multiple ? (
