@@ -84,12 +84,26 @@ export function ComboBox({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[200px] justify-between"
+          className="w-[250px] flex gap-1"
           disabled={disabled}
         >
-          {value && !multiselect
-            ? options.find((option) => option.value === value[0])?.label
-            : "Select options..."}
+          {(multiselect && value?.length > 0) ? (
+            <>
+              {[...value].slice(0, 2).map((it) => (
+                  <div key={it} className="bg-accent px-3 py-1 rounded-sm text-sm truncate">
+                    {it}
+                  </div>
+                ))}
+                {value.length > 2 && (
+                  <div className="bg-accent px-3 py-1 rounded-sm text-sm">
+                    +{value.length - 2}
+                  </div>
+                )}
+            </>
+          ) : (
+            // not multiselect
+            value ? options.find((option) => option.value === value[0])?.label : "Select options...")
+          }
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
