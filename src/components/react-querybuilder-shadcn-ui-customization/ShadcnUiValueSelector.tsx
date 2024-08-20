@@ -56,31 +56,29 @@ const fetchMockOptions = (query: string) => {
   })
 }
 
-export const ShadcnUiValueSelector = (props: ShadcnUiValueSelectorProps) => {
-  const {
-    handleOnChange,
-    options: _options,
-    value,
-    title,
-    disabled,
-    // Props that should not be in extraProps
-    testID: _testID,
-    rule: _rule,
-    rules: _rules,
-    level: _level,
-    path: _path,
-    context: _context,
-    validation: _validation,
-    operator: _operator,
-    field: _field,
-    fieldData: _fieldData,
-    multiple: _multiple,
-    combobox: _combobox = true,
-    listsAsArrays: _listsAsArrays,
-    schema: _schema,
-    ...extraProps
-  } = props
-
+export const ShadcnUiValueSelector = ({
+  handleOnChange,
+  options: _options,
+  value,
+  title,
+  disabled,
+  // Props that should not be in extraProps
+  testID: _testID,
+  rule: _rule,
+  rules: _rules,
+  level: _level,
+  path: _path,
+  context: _context,
+  validation: _validation,
+  operator: _operator,
+  field: _field,
+  fieldData: _fieldData,
+  multiple: _multiple,
+  combobox: _combobox = true,
+  listsAsArrays: _listsAsArrays,
+  schema: _schema,
+  ...extraProps
+}: ShadcnUiValueSelectorProps) => {
   const [options, setOptions] = useState<OptionList>(_options)
 
   useEffect(() => {
