@@ -288,8 +288,8 @@ const fieldsForBen: Field[] = [
     ],
   },
   {
-    name: "industryGroup",
-    label: "Industry Group",
+    name: "citiesSearch",
+    label: "Cities Search",
     valueEditorType: "multiselect",
     values: {
       fetchValues: async (query: string) => {
@@ -425,14 +425,9 @@ export const WithRealisticDataForBen = ({}) => {
                     value: "innovative technology",
                   },
                   {
-                    field: "industrySector",
+                    field: "citiesSearch",
                     operator: "=",
-                    value: ["Business Products and Services (B2B)", "Energy"],
-                  },
-                  {
-                    field: "industryGroup",
-                    operator: "!=",
-                    value: ["Agriculture", "Capital Markets/Institutions"],
+                    value: [],
                   },
                   {
                     field: "industryCode",

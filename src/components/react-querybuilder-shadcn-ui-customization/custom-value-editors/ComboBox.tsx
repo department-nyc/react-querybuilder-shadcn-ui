@@ -84,7 +84,7 @@ export function ComboBox({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[250px] flex gap-1"
+          className="w-[250px] flex gap-1 hover:bg-accent-foreground/15"
           disabled={disabled}
         >
           {(multiselect && value?.length > 0) ? (
@@ -102,7 +102,7 @@ export function ComboBox({
             </>
           ) : (
             // not multiselect
-            value ? options.find((option) => option.value === value[0])?.label : "Select options...")
+            value.length > 0 ? options.find((option) => option.value === value[0])?.label : "Select options...")
           }
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
@@ -111,7 +111,10 @@ export function ComboBox({
         <Command>
           <CommandInput
             placeholder="Search options..."
-            onValueChange={(query) => onQueryChange(query)}
+            onValueChange={(query) => {
+              onQueryChange(query);
+              console.log("Query change", query);
+            }}
           />
           <CommandList>
             <CommandEmpty>No options found.</CommandEmpty>
@@ -133,7 +136,7 @@ export function ComboBox({
                       }
                     }
 
-                    setOpen(false)
+                    // setOpen(false)
                     onValueChange(newValue)
                   }}
                 >
