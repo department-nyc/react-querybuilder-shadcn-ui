@@ -1,5 +1,4 @@
 import { Check, ChevronsUpDown } from "lucide-react"
-import * as React from "react"
 import { isOptionGroupArray } from "react-querybuilder"
 
 import { Button } from "@/components/ui/button"
@@ -18,6 +17,8 @@ import {
 } from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
 import { OptionList } from "react-querybuilder"
+import { useOptionsRemoteOptions } from "./use-remote-options"
+import { useCallback, useMemo, useState } from "react"
 
 export type ComboBoxProps = {
   multiselect?: boolean
@@ -28,25 +29,31 @@ export type ComboBoxProps = {
   onQueryChange?: (query: string) => void
 }
 
-type ComboBoxInternalOption = { label: string; value: string; name: string }
+type ComboBoxInternalOption = { 
+  label: string
+  name: string
+  value?: string
+}
 
 export function ComboBox({
   multiselect = false,
-  options: optionList = [],
+  options: options_ = [],
   disabled = false,
   value: _value,
   onValueChange: _onValueChange = () => {},
-  onQueryChange = () => {},
+  onQueryChange: _onQueryChange = () => {},
 }: ComboBoxProps) {
-  const [open, setOpen] = React.useState(false)
+  const [open, setOpen] = useState(false)
+  
+  const { options, onQueryChange } = useOptionsRemoteOptions(options_, multiselect, _value)
 
-  const value = React.useMemo(() => {
+  const value = useMemo(() => {
     return (
       Array.isArray(_value) && multiselect ? _value : [_value]
     ) as string[]
   }, [_value, multiselect])
 
-  const onValueChange = React.useCallback(
+  const onValueChange = useCallback(
     (value: string[]) => {
       const newValue = multiselect ? value : value[0]
       _onValueChange(newValue)
@@ -54,29 +61,19 @@ export function ComboBox({
     [_onValueChange, multiselect]
   )
 
-  // TODO: Allow Option Groups within combobox
-  // Right now we are flatenning everything into a simple array of options
-  const options: Array<ComboBoxInternalOption> = React.useMemo(() => {
-    return (
-      isOptionGroupArray(optionList)
-        ? optionList.flatMap((og) => og.options)
-        : Array.isArray(optionList)
-        ? optionList
-        : []
-    ).map((option) => {
-      // TODO: Find out how to properly type this
-      const _option = option as ComboBoxInternalOption
+  if (isOptionGroupArray(options_)) {
+    return <div>Option group array</div>
+  }
 
-      const nameOrValue = _option.value || _option.label
+  /**
+   * Very confusing, but value is optional in most option types.
+   * name is equivalent to value, except when name can't be duplicated?
+   */
+  const getNameOrValueFromOption = (option: ComboBoxInternalOption) => {
+    return option.value || option.name 
+  }
 
-      return {
-        name: _option.name || nameOrValue,
-        value: _option.value || nameOrValue,
-        label: _option.label,
-      }
-    })
-  }, [optionList])
-
+  const MAX_ITEMS = 3
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -84,25 +81,33 @@ export function ComboBox({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[250px] flex gap-1 hover:bg-accent-foreground/15"
+          className="w-[250px] flex gap-1 hover:bg-accent-foreground/15 items-center justify-start truncate"
           disabled={disabled}
         >
-          {(multiselect && value?.length > 0) ? (
-            <>
-              {[...value].slice(0, 2).map((it) => (
-                  <div key={it} className="bg-accent px-3 py-1 rounded-sm text-sm truncate">
-                    {it}
-                  </div>
-                ))}
-                {value.length > 2 && (
-                  <div className="bg-accent px-3 py-1 rounded-sm text-sm">
-                    +{value.length - 2}
-                  </div>
-                )}
-            </>
+          {multiselect ? (
+            /**
+             * Is a multiselect, render up to N items as badges, and "+N" if there are more
+             */
+             value?.length > 0 ? (
+              <>
+                {[...value].slice(0, MAX_ITEMS).map((it) => (
+                    <div key={it} className="bg-accent px-2 py-1 rounded-sm text-sm truncate shrink-0 max-w-32 leading-normal">
+                      {it}
+                    </div>
+                  ))}
+                  {value.length > MAX_ITEMS && (
+                    <div className="bg-accent px-2 py-1 rounded-sm text-sm">
+                      +{value.length - MAX_ITEMS}
+                    </div>
+                  )}
+              </>
+            ) : "Select options..."
           ) : (
-            // not multiselect
-            value.length > 0 ? options.find((option) => option.value === value[0])?.label : "Select options...")
+              /**
+               * Not a multiselect; therefore render either the single value or "Select options..."
+               */
+              value ? value: "Select options..."
+            )
           }
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
@@ -119,36 +124,44 @@ export function ComboBox({
           <CommandList>
             <CommandEmpty>No options found.</CommandEmpty>
             <CommandGroup>
-              {options.map((option) => (
-                <CommandItem
-                  key={option.value}
-                  value={option.value}
-                  onSelect={(currentValue) => {
-                    let newValue: string[] = value
-                    if (!multiselect) {
-                      newValue = [option.value]
-                    } else {
-                      if (currentValue === option.value) {
-                        const included = value.includes(currentValue)
-                        newValue = included
-                          ? value.filter((v) => v !== currentValue)
-                          : value.concat(currentValue)
+              {options.map((option_) => {
+                if (isOptionGroupArray(option_)) {
+                  return "TBD: option group array -- though this should never be done, since opt groups aren't sorted well"
+                } 
+                const option = option_ as ComboBoxInternalOption
+                const nameOrValue = getNameOrValueFromOption(option);
+                const checked = value.includes(nameOrValue)
+                return (
+                  <CommandItem
+                    key={nameOrValue}
+                    value={nameOrValue}
+                    onSelect={(currentValue) => {
+                      let newValue: string[] = value
+                      if (!multiselect) {
+                        newValue = [nameOrValue]
+                      } else {
+                        if (currentValue === nameOrValue) {
+                          const included = value.includes(currentValue)
+                          newValue = included
+                            ? value.filter((v) => v !== currentValue)
+                            : value.concat(currentValue)
+                        }
                       }
-                    }
-
-                    // setOpen(false)
-                    onValueChange(newValue)
-                  }}
-                >
-                  <Check
-                    className={cn(
-                      "mr-2 h-4 w-4",
-                      value.includes(option.value) ? "opacity-100" : "opacity-0"
-                    )}
-                  />
-                  {option.label}
-                </CommandItem>
-              ))}
+                      console.log("On value change", newValue)
+                      // setOpen(false)
+                      onValueChange(newValue)
+                    }}
+                  >
+                    <Check
+                      className={cn(
+                        "mr-2 h-4 w-4",
+                        checked  ? "opacity-100" : "opacity-0"
+                      )}
+                    />
+                    {option.label}
+                  </CommandItem>
+                );
+              })}
             </CommandGroup>
           </CommandList>
         </Command>
