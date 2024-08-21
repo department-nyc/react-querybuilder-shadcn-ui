@@ -10,6 +10,8 @@ import {
   formatQuery,
   QueryBuilder,
 } from "react-querybuilder"
+import { Chance } from "chance"
+
 
 const values = [
   { name: "option1", label: "New York City" },
@@ -578,7 +580,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import clsx from "clsx"
-import { isEmpty, take } from "lodash"
+import { isEmpty, take, times } from "lodash"
 import { CirclePlus } from "lucide-react"
 
 export type ShadcnUiActionProps = ActionWithRulesAndAddersProps
@@ -643,6 +645,91 @@ const ShadcnUiActionElementGroupPopup = ({
 
 ShadcnUiActionElement.displayName = "ShadcnUiActionElement"
 
+
+
+/**
+ * Fake endpoint
+ */
+const chance = new Chance("1");
+const queryCache = times(30, () => chance.company())
+
+
+function mockFetch(query: string) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({ json: async () => queryCache})
+    }, 1000);
+  })
+}
+
+/**
+ * Test remote fetch
+ */
+export const TestRemoteFetch = ({
+}) => {
+  return (
+    <QueryBuilderShadcnUi>
+      <QueryBuilderDnD dnd={{ ...ReactDnD, ...ReactDndHtml5Backend }}>
+        <QueryBuilder
+          controlClassnames={{ queryBuilder: [
+            "queryBuilderAlternateLayoutMatchDesignsMore",
+            "queryBuilder-branches",
+            "with-branch-lines",
+            "in-dialog",
+          ]}}
+          fields={[
+            { 
+              name: "remoteFetch", 
+              label: "Remote Fetch One",
+              operators: [{
+                label: "is",
+                value: "is not",
+              }],
+              valueEditorType: "comboboxmulti" as any,
+              fetchValues: async (query: string) => {
+                const response = await mockFetch(query);
+                const data = take(await response.json(), 30)
+                return data.map((value: string) => ({ name: value, value: value, label: value }))
+              },
+            },
+            { 
+              name: "remoteFetchMulti", 
+              label: "Remote Fetch Multi",
+              operators: [{
+                label: "includes any of",
+                value: "includes any of",
+              }],
+              valueEditorType: "comboboxmulti" as any,
+              allowMultipleValues: true,
+              // fetchValues: async (query: string) => {
+              //   const response = await mockFetch(query);
+              //   const data = take(await response.json(), 30)
+              //   return data.map((value: string) => ({ name: value, value: value, label: value }))
+              // },
+            }
+          ]}
+          operators={operators}
+          enableDragAndDrop
+          autoSelectOperator
+          // autoSelectOperator          
+          // addRuleToNewGroups
+          // getDefaultField={
+          //   'DEFAULT_FIELD'
+          // }
+
+          defaultQuery={{
+            combinator: "and",
+            rules: [
+              // { field: "remoteFetch", operator: "is", value: "" },
+              { field: "remoteFetchMulti", operator: "includes any of", value: "" },              
+            ],
+          }}
+        />
+      </QueryBuilderDnD>
+    </QueryBuilderShadcnUi>
+  )
+}
+
 export default function App() {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
@@ -650,7 +737,7 @@ export default function App() {
         <ModeToggle />
         <div className="flex flex-col gap-20">
           {/* <WithLeftAlign /> */}
-          <WithRealisticDataForBen />
+          <TestRemoteFetch />
         </div>
       </div>
     </ThemeProvider>

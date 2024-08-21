@@ -12,6 +12,7 @@ import {
   useValueEditor,
 } from "react-querybuilder";
 import InputWithToggle from "@/components/react-querybuilder-shadcn-ui-customization/custom-value-editors/InputWithToggle";
+import { ComboBoxMulti } from "./custom-value-editors/ComboBoxMulti";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type ShadcnUiValueEditorProps = ValueEditorProps & {
@@ -108,6 +109,22 @@ export const ShadcnUiValueEditor = (allProps: ShadcnUiValueEditorProps) => {
     );
   }
   switch (type) {
+    case "comboboxmulti" as any:
+      console.log("Rendering combobox, props passed;", { value, values})
+      return (
+        <ComboBoxMulti
+          fieldData={fieldData}
+          options={values}
+          value={value}
+          disabled={disabled}
+          onValueChange={(selected) => {
+            handleOnChange(selected);
+            console.log("Selected", selected)
+          }}
+          searchPlaceholder="Search values..."
+          {...extraProps}
+        />
+      );
     // TODO: extend types to lib
     case "multiInputTest" as any: 
       return (

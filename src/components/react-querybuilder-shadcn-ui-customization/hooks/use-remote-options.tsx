@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react"
 import { OptionList } from "react-querybuilder"
 
 interface UseRemoteOptionsParams {
-  fetchValues: (query: string) => Promise<OptionList>
+  fetchValues?: (query: string) => Promise<OptionList>
   multiple?: boolean
   initialOptions?: OptionList
 }

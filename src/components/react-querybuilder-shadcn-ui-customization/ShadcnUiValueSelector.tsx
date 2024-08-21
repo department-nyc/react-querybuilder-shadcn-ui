@@ -59,7 +59,7 @@ const fetchMockOptions = (query: string) => {
 
 export const ShadcnUiValueSelector = ({
   handleOnChange,
-  options: _options,
+  options,
   value,
   title,
   disabled,
@@ -80,14 +80,6 @@ export const ShadcnUiValueSelector = ({
   schema: _schema,
   ...extraProps
 }: ShadcnUiValueSelectorProps) => {
-  const { options, onQueryChange } = _options.fetchValues
-    ? useRemoteOptions({
-        value,
-        fetchValues: _options.fetchValues,
-        multiple: _multiple,
-        initialOptions: _options,
-      })
-    : { options: _options, onQueryChange: () => {} }
 
   return _multiple ? (
     _combobox ? (
@@ -97,7 +89,6 @@ export const ShadcnUiValueSelector = ({
         value={value as unknown as string[]}
         disabled={disabled}
         onValueChange={handleOnChange}
-        onQueryChange={onQueryChange}
         {...extraProps}
       />
     ) : (
@@ -113,7 +104,6 @@ export const ShadcnUiValueSelector = ({
       value={value}
       disabled={disabled}
       onValueChange={handleOnChange}
-      onQueryChange={onQueryChange}
       {...extraProps}
     />
   ) : (
