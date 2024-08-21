@@ -15,6 +15,7 @@ import { MultiSelect } from "./custom-value-editors/MultiSelect"
 import { toSelectOptions } from "./utils"
 import { ComboBox } from "./custom-value-editors/ComboBox"
 import { debounce, isEmpty } from "lodash"
+import { useRemoteOptions } from "./hooks/use-remote-options"
 
 export type ShadcnUiValueSelectorProps = VersatileSelectorProps &
   ComponentPropsWithoutRef<typeof Select> & {
@@ -79,58 +80,14 @@ export const ShadcnUiValueSelector = ({
   schema: _schema,
   ...extraProps
 }: ShadcnUiValueSelectorProps) => {
-  const [options, setOptions] = useState<OptionList>([])
-
-  useEffect(() => {
-    setOptions(_options.fetchValues ? [] : _options)
-  }, [_options])
-
-  const onQueryChange = useCallback(
-    debounce(async (query: string) => {
-      const { fetchValues } = _options as any
-      if (fetchValues) {
-        const newOptions = isEmpty(query)
-          ? []
-          : ((await fetchValues(query)) as OptionList)
-
-        if (_multiple) {
-          const values = value as string[]
-          // Keep old selected options
-          const oldOptions = options
-          const oldSelectedOptions = oldOptions.filter((option) => {
-            return values.includes(option.value)
-          })
-
-          const newOptionsDict = newOptions.reduce((acc, option) => {
-            acc[option.value] = option
-            return acc
-          }, {})
-
-          const newAndOldOptions = [
-            ...newOptions,
-            ...oldSelectedOptions.filter((option) => {
-              return isEmpty(newOptionsDict[option.value])
-            }),
-          ]
-
-          console.log("newAndOldOptions", {
-            values,
-            oldOptions,
-            oldSelectedOptions,
-            newOptions,
-            newAndOldOptions,
-          })
-
-          setOptions(newAndOldOptions)
-        } else {
-          setOptions(newOptions)
-        }
-      } else {
-        setOptions(_options)
-      }
-    }, 100),
-    [_options, options]
-  )
+  const { options, onQueryChange } = _options.fetchValues
+    ? useRemoteOptions({
+        value,
+        fetchValues: _options.fetchValues,
+        multiple: _multiple,
+        initialOptions: _options,
+      })
+    : { options: _options, onQueryChange: () => {} }
 
   return _multiple ? (
     _combobox ? (
