@@ -288,18 +288,18 @@ const fieldsForBen: Field[] = [
     ],
   },
   {
-    name: "industryGroup",
-    label: "Industry Group",
+    name: "citiesSearch",
+    label: "Cities Search",
     valueEditorType: "multiselect",
-    values: [
-      { name: "Agriculture", label: "Agriculture" },
-      { name: "Apparel and Accessories", label: "Apparel and Accessories" },
-      {
-        name: "Capital Markets/Institutions",
-        label: "Capital Markets/Institutions",
+    values: {
+      fetchValues: async (query: string) => {
+        const response = await fetch(
+          `http://universities.hipolabs.com/search?name=${query}`
+        )
+        const data = take(await response.json(), 30)
+        return data.map((i: any) => ({ ...i, value: i.name, label: i.name }))
       },
-      { name: "Chemicals and Gases", label: "Chemicals and Gases" },
-    ],
+    },
     operators: [
       { name: "=", label: "is" },
       { name: "!=", label: "is not" },
@@ -425,14 +425,9 @@ export const WithRealisticDataForBen = ({}) => {
                     value: "innovative technology",
                   },
                   {
-                    field: "industrySector",
+                    field: "citiesSearch",
                     operator: "=",
-                    value: ["Business Products and Services (B2B)", "Energy"],
-                  },
-                  {
-                    field: "industryGroup",
-                    operator: "!=",
-                    value: ["Agriculture", "Capital Markets/Institutions"],
+                    value: [],
                   },
                   {
                     field: "industryCode",
@@ -583,7 +578,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import clsx from "clsx"
-import { isEmpty } from "lodash"
+import { isEmpty, take } from "lodash"
 import { CirclePlus } from "lucide-react"
 
 export type ShadcnUiActionProps = ActionWithRulesAndAddersProps

@@ -1,4 +1,9 @@
-import { useState, useEffect, type ComponentPropsWithoutRef } from "react"
+import {
+  useState,
+  useEffect,
+  type ComponentPropsWithoutRef,
+  useCallback,
+} from "react"
 import {
   Select,
   SelectContent,
@@ -9,6 +14,7 @@ import type { OptionList, VersatileSelectorProps } from "react-querybuilder"
 import { MultiSelect } from "./custom-value-editors/MultiSelect"
 import { toSelectOptions } from "./utils"
 import { ComboBox } from "./custom-value-editors/ComboBox"
+import { debounce, isEmpty } from "lodash"
 
 export type ShadcnUiValueSelectorProps = VersatileSelectorProps &
   ComponentPropsWithoutRef<typeof Select> & {
@@ -73,18 +79,58 @@ export const ShadcnUiValueSelector = ({
   schema: _schema,
   ...extraProps
 }: ShadcnUiValueSelectorProps) => {
-  const [options, setOptions] = useState<OptionList>(_options)
+  const [options, setOptions] = useState<OptionList>([])
 
   useEffect(() => {
-    setOptions(_options)
+    setOptions(_options.fetchValues ? [] : _options)
   }, [_options])
 
-  const onQueryChange = async (query: string) => {
-    // TODO: Implement dynamic fetching
-    return false
-    const options = (await fetchMockOptions(query)) as OptionList
-    setOptions(options)
-  }
+  const onQueryChange = useCallback(
+    debounce(async (query: string) => {
+      const { fetchValues } = _options as any
+      if (fetchValues) {
+        const newOptions = isEmpty(query)
+          ? []
+          : ((await fetchValues(query)) as OptionList)
+
+        if (_multiple) {
+          const values = value as string[]
+          // Keep old selected options
+          const oldOptions = options
+          const oldSelectedOptions = oldOptions.filter((option) => {
+            return values.includes(option.value)
+          })
+
+          const newOptionsDict = newOptions.reduce((acc, option) => {
+            acc[option.value] = option
+            return acc
+          }, {})
+
+          const newAndOldOptions = [
+            ...newOptions,
+            ...oldSelectedOptions.filter((option) => {
+              return isEmpty(newOptionsDict[option.value])
+            }),
+          ]
+
+          console.log("newAndOldOptions", {
+            values,
+            oldOptions,
+            oldSelectedOptions,
+            newOptions,
+            newAndOldOptions,
+          })
+
+          setOptions(newAndOldOptions)
+        } else {
+          setOptions(newOptions)
+        }
+      } else {
+        setOptions(_options)
+      }
+    }, 100),
+    [_options, options]
+  )
 
   return _multiple ? (
     _combobox ? (
